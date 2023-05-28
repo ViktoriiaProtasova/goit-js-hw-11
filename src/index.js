@@ -23,18 +23,17 @@ formEl.addEventListener('submit', handleSubmitForm);
 
 async function handleSubmitForm(event) {
   event.preventDefault();
+  observer.unobserve(guard);
+  clearMarkup();
 
   if (inputEl.value.trim() === '') {
-    clearMarkup();
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
     return;
   }
-
   try {
     page = 1;
-    clearMarkup();
     const data = await fetchImages(inputEl.value, page, limit);
 
     if (data.totalHits > page) {
