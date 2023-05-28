@@ -33,7 +33,6 @@ async function handleSubmitForm(event) {
     return;
   }
   try {
-    page = 1;
     const data = await fetchImages(inputEl.value, page, limit);
 
     if (data.totalHits > page) {
@@ -61,11 +60,13 @@ function handlePagination(entries, observer) {
         fetchImages(inputEl.value, page, limit).then(data => {
           galleryMarkup(data.hits);
 
-          if (data.totalHits <= page) {
+          if (data.totalHits <= page * limit) {
             observer.unobserve(guard);
-            Notiflix.Notify.info(
-              "We're sorry, but you've reached the end of search results."
-            );
+            setTimeout(() => {
+              Notiflix.Notify.info(
+                "We're sorry, but you've reached the end of search results."
+              );
+            }, 2000);
           }
         });
       }
@@ -79,7 +80,7 @@ function galleryMarkup(fetchedImages) {
   const markup = fetchedImages
     .map(
       image => `
-        <div style="flex-basis: 360px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.54);
+        <div style="flex-basis: 360px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.54);
 -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.54);
 -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.54);">
           <a class="gallery-link" href="${image.largeImageURL}"><img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" style="display: block; width: 100%; height: 220px"></a>
@@ -99,7 +100,7 @@ function galleryMarkup(fetchedImages) {
   galleryContainer.style.flexWrap = 'wrap';
   galleryContainer.style.columnGap = '20px';
   galleryContainer.style.rowGap = '20px';
-  galleryContainer.innerHTML += markup;
+  galleryContainer.insertAdjacentHTML('beforeend', markup);
 
   refreshLightbox();
 }
