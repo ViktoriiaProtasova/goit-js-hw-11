@@ -25,6 +25,7 @@ async function handleSubmitForm(event) {
   event.preventDefault();
   observer.unobserve(guard);
   clearMarkup();
+  page = 1;
 
   if (inputEl.value.trim() === '') {
     Notiflix.Notify.failure(
